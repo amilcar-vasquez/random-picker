@@ -26,16 +26,21 @@ A beautiful Material Design 3 web application that generates random inspirationa
   - Fast and reliable
   - No CORS restrictions
 
-### Quote API
-- **Primary Service**: [Quotable](https://api.quotable.io/)
-- **Endpoint**: `https://api.quotable.io/random`
+### Quotes
+- **Service**: [ZenQuotes API](https://zenquotes.io/)
+- **Endpoint**: `https://zenquotes.io/api/quotes` (via CORS proxy)
+- **CORS Proxy**: `https://corsproxy.io/` - Required to bypass browser CORS restrictions
+- **Implementation Strategy**:
+  - Fetches batch of 50 quotes via CORS proxy and caches locally for 1 hour
+  - Reduces API calls and improves performance
+  - Falls back to local backup quotes (12 biblical quotes) if API/proxy unavailable
+  - No API key required for basic usage
 - **Features**:
-  - No API key required
-  - Free to use
-  - Returns JSON with quote content and author
-- **Fallback**: Local backup quotes array (12 inspirational quotes)
-  - Automatically used if API is unavailable
-  - Ensures application always works
+  - High-quality curated quotes from various authors
+  - Proper author attribution
+  - Smart caching system (1-hour refresh cycle)
+  - Automatic fallback system for reliability
+  - Complies with ZenQuotes best practices
 
 ## 🎯 Implementation Details
 
@@ -53,18 +58,20 @@ A beautiful Material Design 3 web application that generates random inspirationa
 - Mobile-first responsive design
 
 ### 3. JavaScript Fetch Logic
-1. User clicks "Generate New Poster" button
-2. Status displays "Loading..." message
-3. `Promise.allSettled()` fetches image and quote simultaneously
-4. Quote API tries Quotable with 3-second timeout
-5. Falls back to local quotes if API fails
-6. Updates poster with new content
+1. On first load, fetches 50 quotes from ZenQuotes API and caches them
+2. User clicks "Generate New Poster" button
+3. Status displays "Loading..." message
+4. `Promise.allSettled()` fetches image and selects quote simultaneously
+5. Random image fetched from Lorem Picsum with timestamp parameter
+6. Random quote selected from cached collection (refreshes hourly)
+7. Updates poster with new content instantly
 7. Shows success/error status messages
 
 ### 4. Error Handling
-- **Image fetch fails**: Keeps current image, updates quote
-- **Quote fetch fails**: Uses backup quotes from local array
-- **Both fail**: Keeps all current content, shows error message
+- **Image fetch fails**: Keeps current image, still updates quote
+- **ZenQuotes API fails**: Automatically falls back to local backup quotes (12 biblical quotes)
+- **Partial failure**: Shows appropriate error message
+- **Cache system**: Ensures quotes always available even if API is down
 - **No blank states**: Always displays meaningful content
 
 

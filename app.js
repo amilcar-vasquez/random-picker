@@ -57,35 +57,63 @@ function getRandomBackupQuote() {
 }
 
 /**
- * Fetches a random quote with fallback to local quotes
+ * Fetches quotes from ZenQuotes API using CORS proxy and caches them
+ * Returns a random quote from cache or fetches new batch if cache is empty
  * @returns {Promise<string>} Formatted quote with author
  */
+let quotesCache = [];
+let lastFetchTime = 0;
+const CACHE_DURATION = 3600000; // 1 hour in milliseconds
+
 async function fetchRandomQuote() {
-  // Try Quotable API first
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
-    
-    const response = await fetch('https://api.quotable.io/random', {
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-    
-    if (!response.ok) {
-      throw new Error(`API returned ${response.status}`);
+  const now = Date.now();
+  
+  // Check if we need to refresh the cache (empty or expired)
+  if (quotesCache.length === 0 || (now - lastFetchTime) > CACHE_DURATION) {
+    try {
+      console.log('Fetching fresh quotes from ZenQuotes API...');
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      
+      // Use corsproxy.io as CORS proxy (free, no registration needed)
+      const proxyUrl = 'https://corsproxy.io/?';
+      const apiUrl = 'https://zenquotes.io/api/quotes';
+      
+      const response = await fetch(proxyUrl + apiUrl, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`API returned ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Cache the quotes
+      quotesCache = data.map(item => ({
+        content: item.q,
+        author: item.a
+      }));
+      
+      lastFetchTime = now;
+      console.log(`✓ Cached ${quotesCache.length} quotes from ZenQuotes API`);
+      
+    } catch (error) {
+      console.warn('ZenQuotes API failed, using backup quotes:', error.message);
+      // Fall back to backup quotes if API fails
+      if (quotesCache.length === 0) {
+        quotesCache = BACKUP_QUOTES;
+        console.log('Using backup quotes collection');
+      }
     }
-    
-    const data = await response.json();
-    console.log('✓ Quotable API success');
-    return `"${data.content}" — ${data.author}`;
-    
-  } catch (error) {
-    // If API fails, use backup quotes
-    console.warn('Quote API failed, using backup quotes:', error.message);
-    const quote = getRandomBackupQuote();
-    return `"${quote.content}" — ${quote.author}`;
   }
+  
+  // Return a random quote from cache
+  const randomIndex = Math.floor(Math.random() * quotesCache.length);
+  const quote = quotesCache[randomIndex];
+  return `"${quote.content}" — ${quote.author}`;
 }
 
 /**
@@ -187,12 +215,11 @@ window.addEventListener('load', async () => {
   console.log('🎨 Random Poster Generator loaded successfully!');
   console.log('Using APIs:');
   console.log('- Images: Lorem Picsum (picsum.photos)');
-  console.log('- Quotes: Quotable API with local backup quotes');
+  console.log('- Quotes: ZenQuotes API (zenquotes.io) - cached for performance');
   
-  // Test quote API
-  console.log('Testing quote API...');
+  // Initialize quote cache
   const testQuote = await fetchRandomQuote();
-  console.log('Quote test result:', testQuote);
+  console.log('Initial quote loaded:', testQuote.substring(0, 50) + '...');
 });
 
 // Optional: Keyboard shortcut (Space or Enter) to generate
