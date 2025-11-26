@@ -1,21 +1,16 @@
-# 🎨 Random Poster Generator
-
-A beautiful Material Design 3 web application that generates random inspirational posters by combining stunning images with motivational quotes.
+#  Random Poster Generator
 
 
-## ✨ Features
 
-- 🖼️ **Random High-Quality Images** - Beautiful photos from Lorem Picsum
-- 💬 **Inspirational Quotes** - Motivational quotes with author attribution
-- 🎨 **Material Design 3** - Modern, polished UI using Material Web Components
-- ⚡ **Fast Performance** - Parallel API fetching with Promise.allSettled()
-- 🛡️ **Robust Error Handling** - Graceful fallbacks for API failures
-- 📱 **Fully Responsive** - Works seamlessly on desktop, tablet, and mobile
-- ⌨️ **Keyboard Shortcuts** - Press Space or Enter to generate new posters
-- 🎭 **Smooth Animations** - Elegant transitions and loading states
+##  Features
+
+-  **Random High-Quality Images** - Beautiful photos from Lorem Picsum
+-  **Inspirational Quotes** - Motivational quotes with author attribution
+-  **Fast Performance** - Parallel API fetching with Promise.allSettled()
+-  **Robust Error Handling** - Graceful fallbacks for API failures
 
 
-## 🔌 APIs Used
+## APIs Used
 
 ### Image API
 - **Service**: [Lorem Picsum](https://picsum.photos/)
@@ -42,7 +37,7 @@ A beautiful Material Design 3 web application that generates random inspirationa
   - Automatic fallback system for reliability
   - Complies with ZenQuotes best practices
 
-## 🎯 Implementation Details
+##  Implementation Details
 
 ### 1. HTML Structure
 - Material Web Components (`md-filled-button`)
@@ -75,25 +70,17 @@ A beautiful Material Design 3 web application that generates random inspirationa
 - **No blank states**: Always displays meaningful content
 
 
-## 🧪 Testing
-
-Open `test-api.html` to:
-- Test API connectivity
-- Diagnose CORS issues
-- View detailed error messages
-- Check response formats
-
 ## ⌨️ Keyboard Shortcuts
 
 - **Space** or **Enter**: Generate new poster (when button not focused)
 
-## 📝 Checklist (Completed)
+##  Checklist (Completed)
 
-- ✅ Default content shows on page load
-- ✅ Button fetches new image + quote
-- ✅ Status message updates appropriately
-- ✅ Poster updates with smooth transitions
-- ✅ Fallbacks work for API failures
-- ✅ No blank UI states
-- ✅ Fully responsive design
-- ✅ Material Design 3 styling
+-  Default content shows on page load
+-  Button fetches new image + quote
+-  Status message updates appropriately
+-  Poster updates with smooth transitions
+-  Fallbacks work for API failures
+-  No blank UI states
+-  Fully responsive design
+-  Material Design 3 styling
