@@ -2,18 +2,46 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Poster Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Poster Generator</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Design 3 Web Components -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@material/web/": "https://esm.run/@material/web/"
+        }
+      }
+    </script>
+    <script type="module">
+      import '@material/web/button/filled-button.js';
+      import '@material/web/progress/circular-progress.js';
+    </script>
+    
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Random Image + Quote Poster</h1>
+    <h1>🎨 Random Poster Generator</h1>
 
     <div id="poster">
-      <img id="posterImage" src="DEFAULT_IMAGE_URL_HERE" alt="Poster" />
-      <div id="posterQuote">DEFAULT QUOTE HERE</div>
+      <img 
+        id="posterImage" 
+        src="https://picsum.photos/800/600" 
+        alt="Random poster background" 
+      />
+      <div id="posterQuote">
+        "To everything there is a season, and a time to every purpose under heaven." — King Solomon
+      </div>
     </div>
 
-    <button id="generateBtn">Generate New Poster</button>
+    <md-filled-button id="generateBtn">
+      Generate New Poster
+    </md-filled-button>
 
     <div id="status"></div>
 

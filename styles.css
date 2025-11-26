@@ -1,0 +1,253 @@
+/* Material Design 3 Theme */
+:root {
+  --md-sys-color-primary: #6750a4;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #eaddff;
+  --md-sys-color-on-primary-container: #21005d;
+  --md-sys-color-surface: #fef7ff;
+  --md-sys-color-on-surface: #1d1b20;
+  --md-sys-color-surface-variant: #e7e0ec;
+  --md-sys-color-on-surface-variant: #49454f;
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  color: var(--md-sys-color-on-surface);
+}
+
+h1 {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: -0.5px;
+}
+
+#poster {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  background: white;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 12px rgba(0, 0, 0, 0.15),
+    0 16px 24px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#poster:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 12px 20px rgba(0, 0, 0, 0.2),
+    0 20px 32px rgba(0, 0, 0, 0.15);
+}
+
+#posterImage {
+  width: 100%;
+  height: 600px;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.5s ease;
+}
+
+#posterImage.loading {
+  opacity: 0.6;
+}
+
+#posterQuote {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.6) 80%,
+    transparent 100%
+  );
+  color: white;
+  padding: 3rem 2rem 2rem;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.6;
+  font-style: italic;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.6s ease;
+}
+
+#posterQuote::before {
+  content: '"';
+  font-size: 3rem;
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  opacity: 0.3;
+  font-family: Georgia, serif;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#generateBtn {
+  --md-filled-button-container-color: white;
+  --md-filled-button-label-text-color: #6750a4;
+  --md-filled-button-hover-label-text-color: #6750a4;
+  --md-filled-button-container-height: 56px;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0 32px;
+  border-radius: 28px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#generateBtn:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transform: scale(1.02);
+}
+
+#generateBtn:active {
+  transform: scale(0.98);
+}
+
+#generateBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#status {
+  margin-top: 1.5rem;
+  padding: 1rem 2rem;
+  border-radius: 16px;
+  font-size: 1rem;
+  text-align: center;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+#status.loading {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--md-sys-color-primary);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+#status.success {
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+  animation: slideIn 0.3s ease;
+}
+
+#status.error {
+  background: rgba(244, 67, 54, 0.9);
+  color: white;
+  animation: shake 0.5s ease;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  #posterImage {
+    height: 400px;
+  }
+
+  #posterQuote {
+    font-size: 1.2rem;
+    padding: 2rem 1.5rem 1.5rem;
+  }
+
+  #posterQuote::before {
+    font-size: 2rem;
+    top: 0.5rem;
+    left: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  #posterImage {
+    height: 300px;
+  }
+
+  #posterQuote {
+    font-size: 1rem;
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  #generateBtn {
+    width: 100%;
+  }
+}
