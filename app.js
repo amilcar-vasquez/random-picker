@@ -9,18 +9,18 @@ const IMAGE_API = 'https://picsum.photos/800/600';
 
 // Backup quotes array for random selection
 const BACKUP_QUOTES = [
-  { content: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
-  { content: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs" },
-  { content: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
-  { content: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
-  { content: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle" },
-  { content: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
-  { content: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
-  { content: "Life is either a daring adventure or nothing at all.", author: "Helen Keller" },
-  { content: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
-  { content: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
-  { content: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
-  { content: "Everything you've ever wanted is on the other side of fear.", author: "George Addair" }
+    { content: "The Lord is my shepherd; I shall not want.", author: "David (Psalm 23:1)" },
+    { content: "Trust in the Lord with all thine heart; and lean not unto thine own understanding.", author: "Solomon (Proverbs 3:5)" },
+    { content: "For I know the thoughts that I think toward you, saith the Lord, thoughts of peace, and not of evil, to give you an expected end.", author: "Jeremiah (Jeremiah 29:11)" },
+    { content: "I can do all things through Christ which strengtheneth me.", author: "Paul (Philippians 4:13)" },
+    { content: "Have not I commanded thee? Be strong and of a good courage; be not afraid, neither be thou dismayed: for the Lord thy God is with thee whithersoever thou goest.", author: "Joshua (Joshua 1:9)" },
+    { content: "Thou shalt love thy neighbour as thyself.", author: "Jesus (Matthew 22:39)" },
+    { content: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.", author: "Jesus (John 3:16)" },
+    { content: "But they that wait upon the Lord shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.", author: "Isaiah (Isaiah 40:31)" },
+    { content: "The fruit of the Spirit is love, joy, peace, longsuffering, gentleness, goodness, faith.", author: "Paul (Galatians 5:22)" },
+    { content: "Create in me a clean heart, O God; and renew a right spirit within me.", author: "David (Psalm 51:10)" },
+    { content: "Ask, and it shall be given you; seek, and ye shall find; knock, and it shall be opened unto you.", author: "Jesus (Matthew 7:7)" },
+    { content: "Casting all your care upon him; for he careth for you.", author: "Peter (1 Peter 5:7)" }
 ];
 
 // Default fallback content
