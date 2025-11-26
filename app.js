@@ -212,7 +212,7 @@ generateBtn.addEventListener('click', generateNewPoster);
 
 // Test quote API on page load
 window.addEventListener('load', async () => {
-  console.log('🎨 Random Poster Generator loaded successfully!');
+  console.log('Random Poster Generator loaded successfully!');
   console.log('Using APIs:');
   console.log('- Images: Lorem Picsum (picsum.photos)');
   console.log('- Quotes: ZenQuotes API (zenquotes.io) - cached for performance');
