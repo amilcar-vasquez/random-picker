@@ -37,40 +37,35 @@ function updateStatus(message, type = '') {
   statusDiv.className = type;
 }
 
-/**
- * Fetches a random image from Lorem Picsum
- * @returns {Promise<string>} The image URL
- */
-async function fetchRandomImage() {
-  // Add timestamp to force new random image each time
-  const timestamp = new Date().getTime();
-  return `${IMAGE_API}?random=${timestamp}`;
+// get new image from Lorem Picsum
+function fetchRandomImage() {
+  const imagePromise = new Promise((resolve, reject) => {
+    console.log("Image promise executor running");
+    // Add timestamp to force new random image each time
+    const timestamp = new Date().getTime();
+    resolve(`${IMAGE_API}?random=${timestamp}`);
+  });
+  return imagePromise;
 }
 
-/**
- * Gets a random quote from backup quotes array
- * @returns {object} Quote object with content and author
- */
+//pull random quote from backup collection
 function getRandomBackupQuote() {
   const randomIndex = Math.floor(Math.random() * BACKUP_QUOTES.length);
   return BACKUP_QUOTES[randomIndex];
 }
 
-/**
- * Fetches quotes from ZenQuotes API using CORS proxy and caches them
- * Returns a random quote from cache or fetches new batch if cache is empty
- * @returns {Promise<string>} Formatted quote with author
- */
+// fetch random quote from ZenQuotes API with caching
 let quotesCache = [];
 let lastFetchTime = 0;
 const CACHE_DURATION = 3600000; // 1 hour in milliseconds
 
-async function fetchRandomQuote() {
-  const now = Date.now();
-  
-  // Check if we need to refresh the cache (empty or expired)
-  if (quotesCache.length === 0 || (now - lastFetchTime) > CACHE_DURATION) {
-    try {
+function fetchRandomQuote() {
+  const quotePromise = new Promise((resolve, reject) => {
+    console.log("Quote promise executor running");
+    const now = Date.now();
+    
+    // Check if we need to refresh the cache (empty or expired)
+    if (quotesCache.length === 0 || (now - lastFetchTime) > CACHE_DURATION) {
       console.log('Fetching fresh quotes from ZenQuotes API...');
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
@@ -79,48 +74,61 @@ async function fetchRandomQuote() {
       const proxyUrl = 'https://corsproxy.io/?';
       const apiUrl = 'https://zenquotes.io/api/quotes';
       
-      const response = await fetch(proxyUrl + apiUrl, {
+      fetch(proxyUrl + apiUrl, {
         signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      
-      if (!response.ok) {
-        throw new Error(`API returned ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      // Cache the quotes
-      quotesCache = data.map(item => ({
-        content: item.q,
-        author: item.a
-      }));
-      
-      lastFetchTime = now;
-      console.log(`✓ Cached ${quotesCache.length} quotes from ZenQuotes API`);
-      
-    } catch (error) {
-      console.warn('ZenQuotes API failed, using backup quotes:', error.message);
-      // Fall back to backup quotes if API fails
-      if (quotesCache.length === 0) {
-        quotesCache = BACKUP_QUOTES;
-        console.log('Using backup quotes collection');
-      }
+      })
+        .then(response => {
+          clearTimeout(timeoutId);
+          
+          if (!response.ok) {
+            throw new Error(`API returned ${response.status}`);
+          }
+          
+          return response.json();
+        })
+        .then(data => {
+          // Cache the quotes
+          quotesCache = data.map(item => ({
+            content: item.q,
+            author: item.a
+          }));
+          
+          lastFetchTime = now;
+          console.log(`✓ Cached ${quotesCache.length} quotes from ZenQuotes API`);
+          
+          // Return a random quote from cache
+          const randomIndex = Math.floor(Math.random() * quotesCache.length);
+          const quote = quotesCache[randomIndex];
+          resolve(`"${quote.content}" — ${quote.author}`);
+        })
+        .catch(error => {
+          clearTimeout(timeoutId);
+          console.warn('ZenQuotes API failed, using backup quotes:', error.message);
+          
+          // Fall back to backup quotes if API fails
+          if (quotesCache.length === 0) {
+            quotesCache = BACKUP_QUOTES;
+            console.log('Using backup quotes collection');
+          }
+          
+          // Return a random quote from cache (backup or old cache)
+          const randomIndex = Math.floor(Math.random() * quotesCache.length);
+          const quote = quotesCache[randomIndex];
+          resolve(`"${quote.content}" — ${quote.author}`);
+        });
+    } else {
+      // Return a random quote from cache
+      const randomIndex = Math.floor(Math.random() * quotesCache.length);
+      const quote = quotesCache[randomIndex];
+      resolve(`"${quote.content}" — ${quote.author}`);
     }
-  }
-  
-  // Return a random quote from cache
-  const randomIndex = Math.floor(Math.random() * quotesCache.length);
-  const quote = quotesCache[randomIndex];
-  return `"${quote.content}" — ${quote.author}`;
+    
+  });
+  return quotePromise;
 }
 
-/**
- * Updates the poster with new image and quote
- * Handles partial failures gracefully
- */
-async function generateNewPoster() {
+// Generate new poster content
+function generateNewPoster() {
   // Disable button during fetch
   generateBtn.disabled = true;
   updateStatus('Loading new content...', 'loading');
@@ -133,71 +141,68 @@ async function generateNewPoster() {
   let imageSuccess = false;
   let quoteSuccess = false;
   
-  try {
-    // Fetch both APIs simultaneously for better performance
-    const [imageResult, quoteResult] = await Promise.allSettled([
-      fetchRandomImage(),
-      fetchRandomQuote()
-    ]);
-    
-    // Handle image result
-    if (imageResult.status === 'fulfilled') {
-      imageUrl = imageResult.value;
-      imageSuccess = true;
-    } else {
-      console.error('Image fetch failed:', imageResult.reason);
-    }
-    
-    // Handle quote result
-    if (quoteResult.status === 'fulfilled') {
-      quoteText = quoteResult.value;
-      quoteSuccess = true;
-    } else {
-      console.error('Quote fetch failed:', quoteResult.reason);
-      console.error('Error details:', {
-        message: quoteResult.reason?.message,
-        name: quoteResult.reason?.name,
-        stack: quoteResult.reason?.stack
-      });
-    }
-    
-    // Update UI with successful results
-    if (imageSuccess) {
-      posterImage.src = imageUrl;
-    }
-    
-    if (quoteSuccess) {
-      posterQuote.textContent = quoteText;
-    }
-    
-    // Update status based on results
-    if (imageSuccess && quoteSuccess) {
-      updateStatus('✓ Poster updated successfully!', 'success');
-      setTimeout(() => updateStatus('', ''), 3000);
-    } else if (imageSuccess || quoteSuccess) {
-      const failed = !imageSuccess ? 'image' : 'quote';
-      updateStatus(`⚠ ${failed} fetch failed, kept previous ${failed}`, 'error');
+  // Fetch both APIs simultaneously for better performance
+  Promise.allSettled([
+    fetchRandomImage(),
+    fetchRandomQuote()
+  ])
+    .then(([imageResult, quoteResult]) => {
+      // Handle image result
+      if (imageResult.status === 'fulfilled') {
+        imageUrl = imageResult.value;
+        imageSuccess = true;
+      } else {
+        console.error('Image fetch failed:', imageResult.reason);
+      }
+      
+      // Handle quote result
+      if (quoteResult.status === 'fulfilled') {
+        quoteText = quoteResult.value;
+        quoteSuccess = true;
+      } else {
+        console.error('Quote fetch failed:', quoteResult.reason);
+        console.error('Error details:', {
+          message: quoteResult.reason?.message,
+          name: quoteResult.reason?.name,
+          stack: quoteResult.reason?.stack
+        });
+      }
+      
+      // Update UI with successful results
+      if (imageSuccess) {
+        posterImage.src = imageUrl;
+      }
+      
+      if (quoteSuccess) {
+        posterQuote.textContent = quoteText;
+      }
+      
+      // Update status based on results
+      if (imageSuccess && quoteSuccess) {
+        updateStatus('✓ Poster updated successfully!', 'success');
+        setTimeout(() => updateStatus('', ''), 3000);
+      } else if (imageSuccess || quoteSuccess) {
+        const failed = !imageSuccess ? 'image' : 'quote';
+        updateStatus(`⚠ ${failed} fetch failed, kept previous ${failed}`, 'error');
+        setTimeout(() => updateStatus('', ''), 4000);
+      } else {
+        updateStatus('✗ Failed to fetch new content. Please try again.', 'error');
+        setTimeout(() => updateStatus('', ''), 4000);
+      }
+    })
+    .catch(error => {
+      console.error('Unexpected error:', error);
+      updateStatus('✗ An unexpected error occurred. Please try again.', 'error');
       setTimeout(() => updateStatus('', ''), 4000);
-    } else {
-      updateStatus('✗ Failed to fetch new content. Please try again.', 'error');
-      setTimeout(() => updateStatus('', ''), 4000);
-    }
-    
-  } catch (error) {
-    console.error('Unexpected error:', error);
-    updateStatus('✗ An unexpected error occurred. Please try again.', 'error');
-    setTimeout(() => updateStatus('', ''), 4000);
-  } finally {
-    // Re-enable button and remove loading effect
-    generateBtn.disabled = false;
-    posterImage.classList.remove('loading');
-  }
+    })
+    .finally(() => {
+      // Re-enable button and remove loading effect
+      generateBtn.disabled = false;
+      posterImage.classList.remove('loading');
+    });
 }
 
-/**
- * Preloads an image to ensure smooth transitions
- * @param {string} url - The image URL to preload
- */
+// Preload image to avoid flicker
 function preloadImage(url) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -211,15 +216,20 @@ function preloadImage(url) {
 generateBtn.addEventListener('click', generateNewPoster);
 
 // Test quote API on page load
-window.addEventListener('load', async () => {
+window.addEventListener('load', () => {
   console.log('Random Poster Generator loaded successfully!');
   console.log('Using APIs:');
   console.log('- Images: Lorem Picsum (picsum.photos)');
   console.log('- Quotes: ZenQuotes API (zenquotes.io) - cached for performance');
   
   // Initialize quote cache
-  const testQuote = await fetchRandomQuote();
-  console.log('Initial quote loaded:', testQuote.substring(0, 50) + '...');
+  fetchRandomQuote()
+    .then(testQuote => {
+      console.log('Initial quote loaded:', testQuote.substring(0, 50) + '...');
+    })
+    .catch(error => {
+      console.error('Failed to load initial quote:', error);
+    });
 });
 
 // Optional: Keyboard shortcut (Space or Enter) to generate
