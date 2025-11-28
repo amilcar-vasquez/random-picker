@@ -6,8 +6,10 @@
 
 -  **Random High-Quality Images** - Beautiful photos from Lorem Picsum
 -  **Inspirational Quotes** - Motivational quotes with author attribution
--  **Fast Performance** - Parallel API fetching with Promise.allSettled()
+-  **Promise-Based Architecture** - Uses Promise constructors with `.then()/.catch()/.finally()` chains
+-  **Fast Performance** - Parallel API fetching with `Promise.allSettled()`
 -  **Robust Error Handling** - Graceful fallbacks for API failures
+-  **Smart Caching** - 1-hour quote cache reduces API calls
 
 
 ## APIs Used
@@ -52,15 +54,29 @@
 - Smooth animations and transitions
 - Mobile-first responsive design
 
-### 3. JavaScript Fetch Logic
-1. On first load, fetches 50 quotes from ZenQuotes API and caches them
+### 3. JavaScript Promise-Based Architecture
+**Implementation uses Promise constructors and `.then()/.catch()` chains (no async/await)**
+
+#### Fetch Functions:
+- **`fetchRandomImage()`** - Returns `new Promise()` that resolves with image URL
+- **`fetchRandomQuote()`** - Returns `new Promise()` that handles:
+  - Quote caching (50 quotes cached for 1 hour)
+  - CORS proxy fetching via `.then()` chains
+  - Automatic fallback to backup quotes on error
+  - Always resolves (never rejects) for graceful degradation
+
+#### Execution Flow:
+1. On page load, initializes quote cache using `.then()/.catch()`
 2. User clicks "Generate New Poster" button
 3. Status displays "Loading..." message
-4. `Promise.allSettled()` fetches image and selects quote simultaneously
-5. Random image fetched from Lorem Picsum with timestamp parameter
-6. Random quote selected from cached collection (refreshes hourly)
-7. Updates poster with new content instantly
-7. Shows success/error status messages
+4. `Promise.allSettled()` executes both fetch functions in parallel
+5. Results handled in `.then()` block:
+   - Checks fulfillment status of each promise
+   - Updates UI with successful results
+   - Keeps previous content if fetch fails
+6. `.catch()` handles unexpected errors
+7. `.finally()` re-enables button and clears loading state
+8. Shows success/error status messages
 
 ### 4. Error Handling
 - **Image fetch fails**: Keeps current image, still updates quote
